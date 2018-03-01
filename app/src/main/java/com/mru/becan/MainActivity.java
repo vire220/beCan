@@ -11,48 +11,40 @@ import com.google.android.gms.nearby.messages.MessageListener;
 import com.google.android.gms.nearby.messages.MessagesClient;
 import com.google.android.gms.nearby.messages.MessagesOptions;
 import com.google.android.gms.nearby.messages.NearbyPermissions;
+import com.google.android.gms.nearby.messages.Strategy;
+import com.google.android.gms.nearby.messages.SubscribeOptions;
 import com.mru.becan.tasks.BecanServerTask;
 import com.mru.becan.tasks.OnBecanServerCompleted;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
-import org.json.JSONException;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnBecanServerCompleted{
+public class MainActivity extends AppCompatActivity implements OnBecanServerCompleted{
 
     private static final String TAG = "MAIN_ACTIVITY";
     public static final int MY_PERMISSIONS_REQUEST_INTERNET = 1;
 
-    private Message mMessage;
     private MessagesClient mMessagesClient;
     private MessageListener mMessageListener;
 
-    private EditText apiUrl;
-    private Button btnSearch;
     private TextView apiResult;
 
     private BecanServerTask becanServerTask;
+
+    private String lastFound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        apiUrl = (EditText) findViewById(R.id.apiUrl);
-        btnSearch = (Button) findViewById(R.id.btnSearch);
         apiResult = (TextView) findViewById(R.id.apiResult);
-
-        btnSearch.setOnClickListener(this);
 
         becanServerTask = new BecanServerTask(this, this);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMessagesClient = Nearby.getMessagesClient(this, new MessagesOptions.Builder()
                     .setPermissions(NearbyPermissions.BLE)
                     .build());
@@ -61,20 +53,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
                 != PackageManager.PERMISSION_GRANTED) {
 
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.INTERNET)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.INTERNET)) {
 
             } else {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, MY_PERMISSIONS_REQUEST_INTERNET);
             }
         }
 
+        lastFound = "";
+
         mMessageListener = new MessageListener() {
             @Override
             public void onFound(Message message) {
-                Log.d(TAG, "Found message: " + new String(message.getContent()));
+                String content = new String(message.getContent());
+                Log.i(TAG, "Message found: " + message);
+                Log.i(TAG, "Message string: " + content);
+                Log.i(TAG, "Message namespaced type: " + message.getNamespace() +
+                        "/" + message.getType());
+
+                if(!content.equals(lastFound)) {
+                    lastFound = content;
+                    apiResult.setText("BeCan found, Fetching data from server...");
+                    becanServerTask.executeBecanServerCall("beacons/" + content);
+                }
             }
 
             @Override
@@ -82,22 +83,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.d(TAG, "Lost sight of message: " + new String(message.getContent()));
             }
         };
-
-        mMessage = new Message("Hello World".getBytes());
     }
+
 
     @Override
     public void onStart() {
         super.onStart();
-        Nearby.getMessagesClient(this).publish(mMessage);
-        Nearby.getMessagesClient(this).subscribe(mMessageListener);
+        Log.i(TAG, "Subscribing.");
+        apiResult.setText("Searching for BeCan");
+        SubscribeOptions options = new SubscribeOptions.Builder()
+                .setStrategy(Strategy.BLE_ONLY)
+                .build();
+        Nearby.getMessagesClient(this).subscribe(mMessageListener, options);
     }
 
     @Override
     public void onStop() {
-        Nearby.getMessagesClient(this).unpublish(mMessage);
+        Log.i(TAG, "Unsubscribing.");
         Nearby.getMessagesClient(this).unsubscribe(mMessageListener);
-
         super.onStop();
     }
 
@@ -118,12 +121,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return;
             }
         }
-    }
-
-    @Override
-    public void onClick(View view) {
-        becanServerTask.executeBecanServerCall(apiUrl.getText().toString());
-        apiUrl.setText("");
-        apiResult.setText("Fetching...");
     }
 }
