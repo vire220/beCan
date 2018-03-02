@@ -15,6 +15,7 @@
         <meta-data
             android:name="com.google.android.nearby.messages.API_KEY"
             android:value="AIzaSyAihT93qlA9NoLoOjXQBPYWZIymaNr1IQM" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,6 +23,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".SearchActivity"
+            android:parentActivityName=".MainActivity"></activity>
     </application>
 
 </manifest>

@@ -37,7 +37,6 @@ public class BecanServerTask {
         asyncHttpClient.get(BASE_URL + url, requestParams, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                super.onSuccess(statusCode, headers, response);
                 jsonResponse = response.toString();
                 listener.taskCompleted(jsonResponse);
                 Log.i(TAG, "onSuccess: " + jsonResponse);
@@ -45,7 +44,6 @@ public class BecanServerTask {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                super.onSuccess(statusCode, headers, response);
                 jsonResponse = response.toString();
                 listener.taskCompleted(jsonResponse);
                 Log.i(TAG, "onSuccess: " + jsonResponse);
@@ -53,8 +51,16 @@ public class BecanServerTask {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
                 Log.e(TAG, "onFailure: " + errorResponse);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.e(TAG, "onFailure");
+                Log.e(TAG, "Status Code: " + statusCode);
+                Log.e(TAG, "Headers: " + headers.toString());
+                Log.e(TAG, "Response String: " + responseString);
+                Log.e(TAG, "Exception: " + throwable.getMessage());
             }
         });
     }
