@@ -1,6 +1,7 @@
 package com.mru.becan;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -18,6 +19,8 @@ import com.mru.becan.tasks.OnBecanServerCompleted;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 
@@ -30,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements OnBecanServerComp
     private MessageListener mMessageListener;
 
     private TextView apiResult;
+    private Button searchButton;
 
     private BecanServerTask becanServerTask;
 
@@ -41,6 +45,14 @@ public class MainActivity extends AppCompatActivity implements OnBecanServerComp
         setContentView(R.layout.activity_main);
 
         apiResult = (TextView) findViewById(R.id.apiResult);
+        searchButton = (Button) findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                startActivity(intent);
+            }
+        });
 
         becanServerTask = new BecanServerTask(this, this);
 
