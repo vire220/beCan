@@ -1,13 +1,13 @@
 package com.mru.becan.beacon;
 
+import android.support.annotation.NonNull;
+
+import com.google.android.gms.nearby.messages.Distance;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by vire7 on 3/1/2018.
- */
-
-public class Beacon {
+public class Beacon implements Comparable<Beacon> {
 
     private String beaconId;
     private String name;
@@ -18,6 +18,10 @@ public class Beacon {
     private double lon;
     private String locationDescription;
     private int points;
+
+    private Distance distance;
+
+    private boolean inRange;
 
     public Beacon(JSONObject beacon) throws JSONException {
         this.beaconId = beacon.getString("beaconId");
@@ -32,12 +36,28 @@ public class Beacon {
         this.lon = location.getDouble("lon");
         this.locationDescription = location.getString("description");
         this.points = beacon.getInt("points");
+
+        this.distance = null;
+
+        this.inRange = true;
     }
 
     public Beacon(String beaconId, String name, String content) {
         this.beaconId = beaconId;
         this.name = name;
         this.content = content;
+    }
+
+    public boolean isInRange(){ return inRange; }
+
+    public void setInRange(boolean inRange){ this.inRange = inRange; }
+
+    public void setDistance(Distance distance){
+        this.distance = distance;
+    }
+
+    public Distance getDistance(){
+        return this.distance;
     }
 
     public String getBeaconId() {
@@ -74,5 +94,21 @@ public class Beacon {
 
     public int getPoints() {
         return points;
+    }
+
+    @Override
+    public int compareTo(@NonNull Beacon o) {
+        double d1 = Double.parseDouble(String.format("%.2f", this.distance.getMeters()));
+        double d2 = Double.parseDouble(String.format("%.2f", o.distance.getMeters()));
+
+        double comp = d1 - d2;
+
+        if (comp < 0.5 && comp > -0.5) {
+            return 0;
+        } else if (comp > 0.5) {
+            return 1;
+        } else {
+            return -1;
+        }
     }
 }
