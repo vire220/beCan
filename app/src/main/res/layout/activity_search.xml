@@ -1,16 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/swipe_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.mru.becan.SearchActivity">
 
-    <android.support.v7.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/rv_foundBeacons">
+    <Button
+        android:id="@+id/button-ping"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="Ping"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
 
-    </android.support.v7.widget.RecyclerView>
+    <TextView
+        android:id="@+id/textView-status"
+        android:layout_width="177dp"
+        android:layout_height="39dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="472dp"
+        android:gravity="center"
+        android:text=""
+        app:layout_constraintBottom_toTopOf="@+id/button-ping"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</android.support.v4.widget.SwipeRefreshLayout>
+    <ProgressBar
+        android:id="@+id/progressBar-ping"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="222dp"
+        android:layout_height="213dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:indeterminate="true"
+        app:layout_constraintBottom_toTopOf="@+id/textView-status"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.861" />
+
+    <TextView
+        android:id="@+id/textView-title"
+        style="@style/Base.TextAppearance.AppCompat.Title"
+        android:layout_width="190dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:autoSizeTextType="uniform"
+        android:gravity="center"
+        android:text="Search for BeCan"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.014" />
+
+    <TextView
+        android:id="@+id/textView-clue"
+        android:layout_width="271dp"
+        android:layout_height="112dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center_horizontal"
+        android:text="The clue for the beCan goes here."
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView-title" />
+</android.support.constraint.ConstraintLayout>

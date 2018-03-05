@@ -18,6 +18,7 @@ public class Beacon implements Comparable<Beacon> {
     private double lon;
     private String locationDescription;
     private int points;
+    private String clue;
 
     private Distance distance;
 
@@ -28,6 +29,7 @@ public class Beacon implements Comparable<Beacon> {
         this.name = beacon.getString("name");
         this.description = beacon.getString("description");
         this.content = beacon.getString("content");
+        this.clue = beacon.getString("clue");
         this.enabled = beacon.getBoolean("enabled");
 
         JSONObject location = beacon.getJSONObject("location");
@@ -67,6 +69,8 @@ public class Beacon implements Comparable<Beacon> {
     public String getName() {
         return name;
     }
+
+    public String getClue() { return this.clue; }
 
     public String getDescription() {
         return description;

@@ -22,10 +22,13 @@ public class BeaconRecyclerAdapter extends RecyclerView.Adapter<BeaconRecyclerAd
 
     private static final String TAG = BeaconRecyclerAdapter.class.getSimpleName();
 
+    final private ListItemClickListener mOnClickListener;
+
     private List<Beacon> mList;
 
-    public BeaconRecyclerAdapter(List<Beacon> list) {
+    public BeaconRecyclerAdapter(List<Beacon> list, ListItemClickListener listener) {
         mList = list;
+        mOnClickListener = listener;
     }
 
     @Override
@@ -51,16 +54,27 @@ public class BeaconRecyclerAdapter extends RecyclerView.Adapter<BeaconRecyclerAd
         return mList.size();
     }
 
-    class BeaconViewHolder extends RecyclerView.ViewHolder {
+    class BeaconViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView listItemBeaconView;
 
         public BeaconViewHolder(View itemView) {
             super(itemView);
             listItemBeaconView = (TextView) itemView.findViewById(R.id.rv_item_beacon);
+            itemView.setOnClickListener(this);
         }
 
         void bind(int listIndex, Beacon beacon) {
             listItemBeaconView.setText(beacon.getName());
         }
+
+        @Override
+        public void onClick(View view) {
+            int clickedPosition = getAdapterPosition();
+            mOnClickListener.onListItemClick(clickedPosition);
+        }
+    }
+
+    public interface ListItemClickListener {
+        void onListItemClick(int clickedItemIndex);
     }
 }

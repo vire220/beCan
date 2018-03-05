@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,16 +8,41 @@
     android:padding="16dp"
     tools:context="com.mru.becan.MainActivity">
 
-    <TextView
-        android:id="@+id/apiResult"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <Button
+        android:id="@+id/start-sequence-button"
+        android:layout_width="256dp"
+        android:layout_height="64dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
-        android:hint="search results"/>
+        android:text="Start Adventure"
+        app:layout_constraintEnd_toEndOf="@+id/image-view"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="@+id/image-view"
+        app:layout_constraintTop_toBottomOf="@+id/image-view" />
 
     <Button
-        android:id="@+id/searchButton"
+        android:id="@+id/start-explore-button"
+        android:layout_width="256dp"
+        android:layout_height="64dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="20dp"
+        android:text="Explore"
+        app:layout_constraintEnd_toEndOf="@+id/image-view"
+        app:layout_constraintHorizontal_bias="0.535"
+        app:layout_constraintStart_toStartOf="@+id/image-view"
+        app:layout_constraintTop_toBottomOf="@+id/start-sequence-button" />
+
+    <ImageView
+        android:id="@+id/image-view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Button" />
-</LinearLayout>
+        android:layout_height="346dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/becanlogo" />
+
+</android.support.constraint.ConstraintLayout>
