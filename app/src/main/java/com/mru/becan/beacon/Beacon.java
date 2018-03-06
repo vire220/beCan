@@ -1,13 +1,18 @@
 package com.mru.becan.beacon;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.nearby.messages.Distance;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Beacon implements Comparable<Beacon> {
+import java.util.Arrays;
+
+public class Beacon implements Comparable<Beacon>, Parcelable {
 
     private String beaconId;
     private String name;
@@ -20,6 +25,8 @@ public class Beacon implements Comparable<Beacon> {
     private int points;
     private String clue;
 
+    private Question[] questions;
+
     private Distance distance;
 
     private boolean inRange;
@@ -27,6 +34,7 @@ public class Beacon implements Comparable<Beacon> {
     public Beacon(JSONObject beacon) throws JSONException {
         this.beaconId = beacon.getString("beaconId");
         this.name = beacon.getString("name");
+
         this.description = beacon.getString("description");
         this.content = beacon.getString("content");
         this.clue = beacon.getString("clue");
@@ -39,6 +47,14 @@ public class Beacon implements Comparable<Beacon> {
         this.locationDescription = location.getString("description");
         this.points = beacon.getInt("points");
 
+        JSONArray questions = beacon.getJSONArray("quiz");
+
+        this.questions = new Question[questions.length()];
+
+        for(int i = 0; i < this.questions.length; i++){
+            this.questions[i] = new Question(questions.getJSONObject(i));
+        }
+
         this.distance = null;
 
         this.inRange = true;
@@ -48,6 +64,26 @@ public class Beacon implements Comparable<Beacon> {
         this.beaconId = beaconId;
         this.name = name;
         this.content = content;
+    }
+
+    public Question[] getQuestions() {
+        return questions;
+    }
+
+    public Beacon(Parcel parcel){
+        beaconId = parcel.readString();
+        name = parcel.readString();
+        description = parcel.readString();
+        content = parcel.readString();
+        enabled = parcel.readByte() != 0;
+        lat = parcel.readDouble();
+        lon = parcel.readDouble();
+        locationDescription = parcel.readString();
+        points = parcel.readInt();
+        clue = parcel.readString();
+        Parcelable[] parcelableArray = parcel.readParcelableArray(Question.class.getClassLoader());
+        questions = Arrays.copyOf(parcelableArray, parcelableArray.length, Question[].class);
+
     }
 
     public boolean isInRange(){ return inRange; }
@@ -114,5 +150,38 @@ public class Beacon implements Comparable<Beacon> {
         } else {
             return -1;
         }
+    }
+
+    public static final Parcelable.Creator<Beacon> CREATOR = new Parcelable.Creator<Beacon>() {
+
+        @Override
+        public Beacon createFromParcel(Parcel parcel) {
+            return new Beacon(parcel);
+        }
+
+        @Override
+        public Beacon[] newArray(int i) {
+            return new Beacon[0];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+         parcel.writeString(beaconId);
+         parcel.writeString(name);
+         parcel.writeString(description);
+         parcel.writeString(content);
+         parcel.writeByte((byte) (enabled ? 1 : 0));
+         parcel.writeDouble(lat);
+         parcel.writeDouble(lon);
+         parcel.writeString(locationDescription);
+         parcel.writeInt(points);
+         parcel.writeString(clue);
+         parcel.writeParcelableArray(questions, i);
     }
 }

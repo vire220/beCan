@@ -63,6 +63,7 @@ public class SearchActivity extends AppCompatActivity implements OnBecanServerCo
         @Override
         public void onClick(View view) {
             Intent intent = new Intent(SearchActivity.this, QuizActivity.class);
+            intent.putExtra("beacon", currentBeacon);
             startActivity(intent);
         }
     };
