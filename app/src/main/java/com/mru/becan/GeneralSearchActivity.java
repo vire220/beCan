@@ -38,8 +38,6 @@ public class GeneralSearchActivity extends AppCompatActivity implements OnBecanS
 
     private List<Beacon> beaconList = new ArrayList<>();
 
-    private Toast mToast;
-
     private BeaconRecyclerAdapter mAdapter;
     private RecyclerView mBeaconList;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -78,7 +76,6 @@ public class GeneralSearchActivity extends AppCompatActivity implements OnBecanS
         mBeaconList.setAdapter(mAdapter);
 
         becanServerTask = new BecanServerTask(this, this);
-
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMessagesClient = Nearby.getMessagesClient(this, new MessagesOptions.Builder()

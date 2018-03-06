@@ -30,8 +30,10 @@
             android:name=".GeneralSearchActivity"
             android:parentActivityName=".MainActivity" />
         <activity android:name=".SequenceActivity" />
-        <activity android:name=".SearchActivity"
+        <activity
+            android:name=".SearchActivity"
             android:parentActivityName=".MainActivity" />
+        <activity android:name=".QuizActivity"></activity>
     </application>
 
 </manifest>
