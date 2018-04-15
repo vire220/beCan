@@ -5,7 +5,6 @@ import android.util.Log;
 
 import org.json.*;
 import com.loopj.android.http.*;
-import com.mru.becan.api.BecanRestClient;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -23,7 +22,7 @@ public class BecanServerTask {
     private AsyncHttpClient asyncHttpClient;
     private RequestParams requestParams;
 
-    private String BASE_URL = "https://becan-server-vire220.c9users.io/";
+    private String BASE_URL = "https://becan-server-clean-vire220.c9users.io/api/";
     private String jsonResponse;
 
     public BecanServerTask(Context context, OnBecanServerCompleted listener) {

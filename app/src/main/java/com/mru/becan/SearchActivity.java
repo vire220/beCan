@@ -1,7 +1,10 @@
 package com.mru.becan;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
+import android.os.Parcelable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +24,7 @@ import com.mru.becan.beacon.Beacon;
 import com.mru.becan.tasks.BecanServerTask;
 import com.mru.becan.tasks.OnBecanServerCompleted;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,11 +36,11 @@ public class SearchActivity extends AppCompatActivity implements OnBecanServerCo
 
     private static final String TAG = "SEARCH_ACTIVITY";
 
-    private static final String SEQUENCE_ID = "5a9dd312b6c4ec12881f13ca";
+    private static final String SEQUENCE_ID = "5ad389f940a1710ccb1a7b8b";
 
     private MessageListener mMessageListener;
 
-    private int sequenceId;
+    private Beacon[] beacons;
     private Beacon currentBeacon;
 
     private TextView clueTextView;
@@ -55,15 +59,16 @@ public class SearchActivity extends AppCompatActivity implements OnBecanServerCo
     private View.OnClickListener stopPingListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            showClue();
+            stopSearching();
         }
     };
 
-    private View.OnClickListener startQuizistener = new View.OnClickListener() {
+    private View.OnClickListener startQuizListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             Intent intent = new Intent(SearchActivity.this, QuizActivity.class);
             intent.putExtra("beacon", currentBeacon);
+            intent.putExtra("beaconArray", beacons);
             startActivity(intent);
         }
     };
@@ -73,8 +78,6 @@ public class SearchActivity extends AppCompatActivity implements OnBecanServerCo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        currentBeacon = null;
-
         clueTextView = findViewById(R.id.textView_clue);
         statusTextView = findViewById(R.id.textView_status);
         pingButton = findViewById(R.id.button_ping);
@@ -82,8 +85,6 @@ public class SearchActivity extends AppCompatActivity implements OnBecanServerCo
         pingButton.setOnClickListener(startPingListener);
 
         becanServerTask = new BecanServerTask(this,this);
-
-        getInitialContent();
 
         mMessageListener = new MessageListener() {
 
@@ -103,6 +104,38 @@ public class SearchActivity extends AppCompatActivity implements OnBecanServerCo
                 Log.d(TAG, "Lost sight of message: " + content);
             }
         };
+
+        Intent intent = getIntent();
+
+        if (intent.getBooleanExtra("victory", false)){
+            displayFinishDialog();
+        }
+
+        currentBeacon = intent.getParcelableExtra("beacon");
+        Parcelable[] parceledArray = intent.getParcelableArrayExtra("beaconArray");
+        if (parceledArray != null && currentBeacon != null) {
+            beacons = new Beacon[parceledArray.length];
+            for (int i = 0; i < parceledArray.length; i++) {
+                beacons[i] = (Beacon)parceledArray[i];
+            }
+            showClue();
+        } else {
+            getInitialContent();
+        }
+    }
+
+    private void displayFinishDialog(){
+        new AlertDialog.Builder(SearchActivity.this)
+                .setTitle("Complete!")
+                .setMessage("Congrats! You have found the final clue and finished the Adventure!")
+                .setNeutralButton("Menu", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(SearchActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                })
+                .show();
     }
 
     @Override
@@ -112,7 +145,7 @@ public class SearchActivity extends AppCompatActivity implements OnBecanServerCo
     }
 
     private void getInitialContent(){
-        String url = "/sequences/" + SEQUENCE_ID + "/first/";
+        String url = "sequences/" + SEQUENCE_ID + "/beacons/";
         pingButton.setEnabled(false);
         becanServerTask.executeBecanServerCall(url);
         statusTextView.setText("Fetching clue, please wait...");
@@ -134,15 +167,26 @@ public class SearchActivity extends AppCompatActivity implements OnBecanServerCo
 
     private void beaconFound(){
         unsubscribe();
-        pingButton.setOnClickListener(startQuizistener);
+        pingButton.setOnClickListener(startQuizListener);
         pingButton.setText("Start Quiz");
         statusTextView.setText("Beacon Found!");
+    }
+
+    private void stopSearching(){
+        unsubscribe();
+        pingButton.setOnClickListener(startPingListener);
+        showClue();
     }
 
     @Override
     public void taskCompleted(String results) {
         try {
-            currentBeacon = new Beacon(new JSONObject(results));
+            JSONArray resultArray = new JSONArray(results);
+            beacons = new Beacon[resultArray.length()];
+            for (int i = 0; i < resultArray.length(); i++) {
+                beacons[i] = new Beacon(resultArray.getJSONObject(i));
+            }
+            currentBeacon = beacons[0];
             showClue();
             Log.i(TAG, results);
 

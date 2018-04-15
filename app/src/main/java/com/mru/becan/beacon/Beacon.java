@@ -17,12 +17,12 @@ public class Beacon implements Comparable<Beacon>, Parcelable {
     private String beaconId;
     private String name;
     private String description;
-    private String content;
+    //private String content;
     private boolean enabled;
-    private double lat;
-    private double lon;
-    private String locationDescription;
-    private int points;
+    //private double lat;
+    //private double lon;
+    //private String locationDescription;
+    //private int points;
     private String clue;
 
     private Question[] questions;
@@ -36,16 +36,16 @@ public class Beacon implements Comparable<Beacon>, Parcelable {
         this.name = beacon.getString("name");
 
         this.description = beacon.getString("description");
-        this.content = beacon.getString("content");
+        //this.content = beacon.getString("content");
         this.clue = beacon.getString("clue");
         this.enabled = beacon.getBoolean("enabled");
 
-        JSONObject location = beacon.getJSONObject("location");
+        //JSONObject location = beacon.getJSONObject("location");
 
-        this.lat = location.getDouble("lat");
-        this.lon = location.getDouble("lon");
-        this.locationDescription = location.getString("description");
-        this.points = beacon.getInt("points");
+        //this.lat = location.getDouble("lat");
+        //this.lon = location.getDouble("lon");
+        //this.locationDescription = location.getString("description");
+        //this.points = beacon.getInt("points");
 
         JSONArray questions = beacon.getJSONArray("quiz");
 
@@ -63,7 +63,7 @@ public class Beacon implements Comparable<Beacon>, Parcelable {
     public Beacon(String beaconId, String name, String content) {
         this.beaconId = beaconId;
         this.name = name;
-        this.content = content;
+        //this.content = content;
     }
 
     public Question[] getQuestions() {
@@ -74,12 +74,12 @@ public class Beacon implements Comparable<Beacon>, Parcelable {
         beaconId = parcel.readString();
         name = parcel.readString();
         description = parcel.readString();
-        content = parcel.readString();
+        //content = parcel.readString();
         enabled = parcel.readByte() != 0;
-        lat = parcel.readDouble();
-        lon = parcel.readDouble();
-        locationDescription = parcel.readString();
-        points = parcel.readInt();
+        //lat = parcel.readDouble();
+        //lon = parcel.readDouble();
+        //locationDescription = parcel.readString();
+        //points = parcel.readInt();
         clue = parcel.readString();
         Parcelable[] parcelableArray = parcel.readParcelableArray(Question.class.getClassLoader());
         questions = Arrays.copyOf(parcelableArray, parcelableArray.length, Question[].class);
@@ -112,14 +112,17 @@ public class Beacon implements Comparable<Beacon>, Parcelable {
         return description;
     }
 
+/**
     public String getContent() {
         return content;
     }
+**/
 
     public boolean isEnabled() {
         return enabled;
     }
 
+    /**
     public double getLat() {
         return lat;
     }
@@ -135,6 +138,7 @@ public class Beacon implements Comparable<Beacon>, Parcelable {
     public int getPoints() {
         return points;
     }
+     **/
 
     @Override
     public int compareTo(@NonNull Beacon o) {
@@ -175,12 +179,12 @@ public class Beacon implements Comparable<Beacon>, Parcelable {
          parcel.writeString(beaconId);
          parcel.writeString(name);
          parcel.writeString(description);
-         parcel.writeString(content);
+         //parcel.writeString(content);
          parcel.writeByte((byte) (enabled ? 1 : 0));
-         parcel.writeDouble(lat);
-         parcel.writeDouble(lon);
-         parcel.writeString(locationDescription);
-         parcel.writeInt(points);
+         //parcel.writeDouble(lat);
+         //parcel.writeDouble(lon);
+         //parcel.writeString(locationDescription);
+         //parcel.writeInt(points);
          parcel.writeString(clue);
          parcel.writeParcelableArray(questions, i);
     }

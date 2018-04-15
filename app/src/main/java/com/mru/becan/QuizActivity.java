@@ -1,6 +1,9 @@
 package com.mru.becan;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Parcelable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +19,7 @@ public class QuizActivity extends AppCompatActivity {
     private static final String TAG = "QUIZ_ACTIVITY";
 
     private Beacon beacon;
+    private Beacon[] beacons;
     private Question question;
 
     private TextView titleTextView;
@@ -30,8 +34,26 @@ public class QuizActivity extends AppCompatActivity {
     private View.OnClickListener correctAnswerListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Toast toast = Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_LONG);
-            toast.show();
+            new AlertDialog.Builder(QuizActivity.this)
+                    .setMessage("Correct!")
+                    .setNeutralButton("Next Clue", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            beacon = getNextBeacon();
+
+                            if (beacon != null) {
+                                Intent intent = new Intent(QuizActivity.this, SearchActivity.class);
+                                intent.putExtra("beacon", beacon);
+                                intent.putExtra("beaconArray", beacons);
+                                startActivity(intent);
+                            } else {
+                                Intent intent = new Intent(QuizActivity.this, SearchActivity.class);
+                                intent.putExtra("victory", true);
+                                startActivity(intent);
+                            }
+                        }
+                    })
+                    .show();
         }
     };
 
@@ -50,6 +72,12 @@ public class QuizActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         beacon = intent.getParcelableExtra("beacon");
+        Parcelable[] parceledArray = intent.getParcelableArrayExtra("beaconArray");
+        beacons = new Beacon[parceledArray.length];
+        for (int i = 0; i < parceledArray.length; i++) {
+            beacons[i] = (Beacon)parceledArray[i];
+        }
+
         question = beacon.getQuestions()[0];
 
         titleTextView = findViewById(R.id.textView_quiz_title);
@@ -77,5 +105,14 @@ public class QuizActivity extends AppCompatActivity {
                 buttonArray[i].setOnClickListener(wrongAnswerListener);
             }
         }
+    }
+
+    private Beacon getNextBeacon() {
+        for (int i = 0; i < beacons.length; i++) {
+            if(i < beacons.length - 1 && beacon.getBeaconId().equals(beacons[i].getBeaconId())) {
+                    return beacons[i + 1];
+                }
+            }
+        return null;
     }
 }
