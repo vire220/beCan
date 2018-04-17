@@ -170,6 +170,7 @@ public class SearchActivity extends AppCompatActivity implements OnBecanServerCo
         pingButton.setOnClickListener(startQuizListener);
         pingButton.setText("Start Quiz");
         statusTextView.setText("Beacon Found!");
+        clueTextView.setText(currentBeacon.getDescription());
     }
 
     private void stopSearching(){
